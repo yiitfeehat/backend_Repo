@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/Ferhat/Desktop/test.sqlite3" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="2749"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="Album" custom_title="0" dock_id="1" table="4,5:mainAlbum"/><dock_state state="000000ff00000000fd0000000100000002000001ae00000513fc0100000001fb000000160064006f0063006b00420072006f00770073006500310100000000000001ae0000011700ffffff000001ae0000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Album" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort><column index="0" mode="0"/></sort><column_widths><column index="1" value="65"/><column index="2" value="300"/><column index="3" value="61"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1*">-- Single Line comment line.
+/* 
+Bu da çoklusu.
+*/
+
+--SELECT 1 as one --Tek block işlemlerde sonunda ; koymak zorunda değiliz.
+--SELECT 2 as two; -- komuttan sonra yorum için -- kullanabiliriz.
+--SELECT 3 as three,  /* ARAYA YORUM */ 4 as four;
+
+-----------------------------
+
+--* SELECT -- Seç ve getir işlemi yapar.
+--* FROM -- Hangi tablodan ?
+SELECT * FROM Album;
+SELECT AlbumId, Title FROM Album; -- İstediğim sütnları getir. // Recommended.
+
+-- * as -- tabloe ve sütunları (geçici olarak) adlandırmak için kullanılır.
+SELECT 3 AS number;
+SELECT 'string' as title;
+,
+SELECT AlbumId AS Number, Title as ' Album Title' FROM Album; --Sütunları isimlendirme
+SELECT a.AlbumId as number, a.Title as 'Albüm Title' FROM Album as a;
+
+SELECT a.AlbumId number, a.Title 'Albüm Title' FROM Album a; -- As yazmadan isimlendirme şekli.</sql><current_tab id="0"/></tab_sql></sqlb_project>
