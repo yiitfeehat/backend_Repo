@@ -10,7 +10,6 @@
 const express = require("express");
 const app = express();
 const Todo = require("./models/todo.model")
-require("dotenv").config();
 const PORT = process.env.PORT || 8000;
 
 
