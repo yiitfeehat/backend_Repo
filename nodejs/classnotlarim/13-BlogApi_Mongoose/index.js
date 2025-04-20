@@ -17,6 +17,11 @@ app.use(express.json());
 //! Caach async errors
 require("express-async-errors");
 
+// //? DB Connection
+// const dbConnection = require("./src/dbConnection");
+// dbConnection();
+require("./src/dbConnection")();
+
 /* -------------------------------------------------------------------------- */
 //? Routes
 /* -------------------------------------------------------------------------- */
