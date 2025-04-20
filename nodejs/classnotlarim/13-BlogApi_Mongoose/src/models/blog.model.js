@@ -32,7 +32,7 @@ const BlogCategory = mongoose.model("BlogCategory", blogCategorySchema);
 const BlogPostSchema = new mongoose.Schema({
     categoryId: { // defalt relation: ManyToOne
 
-        type: mongoose.Schema.type.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "BlogCategory",
         required: true,
         // unique: true // convert relation to OneToOne. eşsiz olacağı için...
