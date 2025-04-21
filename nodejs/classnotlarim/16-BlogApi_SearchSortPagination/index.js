@@ -52,6 +52,13 @@ app.use('/blogs', require('./src/routes/blog.router'));
 // User Route
 app.use('/users', require('./src/routes/user.router'));
 
+// Not Found Route
+app.all('*', (req, res) => {
+    res.status(404).send({
+        error: true,
+        message: 'The route you are looking is not found'
+    })
+});
 
 /*------------------------------------------------------- */
 

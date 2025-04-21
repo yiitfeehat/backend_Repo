@@ -93,7 +93,7 @@ module.exports = {
             const user = await User.findOne({ email });
 
             if (user) {
- 
+
                 if (user.password == passwordEncrypte(password)) {
 
                     /*  Session */
