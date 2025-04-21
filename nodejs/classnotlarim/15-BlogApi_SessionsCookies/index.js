@@ -20,9 +20,20 @@ require('express-async-errors');
 // dbConnection();
 require('./src/dbConnection')();
 
+//SessionCookie 
+// https://expressjs.com/en/resources/middleware/cookie-session.html
+// + npm i cookie-session
+
+const session = require("cookie-session");
+
+app.use(session({
+    secret: process.env.PASS_SALT,
+    // maxAge: 1000 * 60 * 60 * 24 * 3
+}))
+
 /*------------------------------------------------------- */
 // Main Route:
-app.all('/', (req, res) => res.send('Welcome to Blog API'));
+app.all('/', (req, res) => res.send(console.log(req.session), 'Welcome to Blog API'));
 
 // Blog Route
 app.use('/blogs', require('./src/routes/blog.router'));
