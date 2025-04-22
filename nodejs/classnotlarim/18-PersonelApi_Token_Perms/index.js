@@ -52,6 +52,9 @@ app.use("/departments",require("./src/routes/department"))
 // Personnnel Route
 app.use("/tokens",require("./src/routes/token"))
 
+// Auth Route
+app.use("/auth", require("./src/routes/auth"))
+
 app.use("*", (req,res)=>{
 res.status(404).send({
     error:true,
