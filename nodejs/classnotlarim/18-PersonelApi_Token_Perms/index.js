@@ -47,10 +47,11 @@ app.all('/', (req, res) => {
 app.use("/departments",require("./src/routes/department"))
 
 //Token Route
-app.use("/departments",require("./src/routes/department"))
+app.use("/tokens",require("./src/routes/token"))
+
 
 // Personnnel Route
-app.use("/tokens",require("./src/routes/token"))
+app.use("/personnels",require("./src/routes/personnel"))
 
 // Auth Route
 app.use("/auth", require("./src/routes/auth"))
