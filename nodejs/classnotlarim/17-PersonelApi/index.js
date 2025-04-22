@@ -26,10 +26,10 @@ app.use(session({
     secret: process.env.SECRET_KEY,
 }))
 
-
-
 // Query Handler:
 app.use(require('./src/middlewares/queryHandler'))
+
+require("./src/configs/dbConnection")
 
 
 
@@ -42,6 +42,11 @@ app.all('/', (req, res) => {
         message: 'WELCOME TO PERSONNEL API',
     })
 })
+
+app.use("/departments",require("./src/routes/department"))
+
+
+
 
 
 // Error Handler:
