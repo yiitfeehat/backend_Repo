@@ -29,9 +29,11 @@ app.use(session({
 // Query Handler:
 app.use(require('./src/middlewares/queryHandler'))
 
+// DB connection
 require("./src/configs/dbConnection")
 
-
+// Authentication
+app.use(require('./src/middlewares/authentication'));
 
 
 /* ------------------------------------------------------- */
@@ -44,28 +46,23 @@ app.all('/', (req, res) => {
 })
 
 // Departments Route
-app.use("/departments",require("./src/routes/department"))
-
-//Token Route
-app.use("/tokens",require("./src/routes/token"))
-
+app.use("/departments", require("./src/routes/department"))
 
 // Personnnel Route
-app.use("/personnels",require("./src/routes/personnel"))
+app.use("/personnels", require("./src/routes/personnel"))
+
+// Token Route
+app.use("/tokens", require('./src/routes/token'))
 
 // Auth Route
-app.use("/auth", require("./src/routes/auth"))
+app.use('/auth', require('./src/routes/auth'));
 
-app.use("*", (req,res)=>{
-res.status(404).send({
-    error:true,
-    message:"This route not found"
-})
-})
-
-
-
-
+app.use("*", (req, res) => {
+    res.status(404).send({
+        error: true,
+        message: "This route not found"
+    })
+});
 
 // Error Handler:
 app.use(require('./src/middlewares/errorHandler'))

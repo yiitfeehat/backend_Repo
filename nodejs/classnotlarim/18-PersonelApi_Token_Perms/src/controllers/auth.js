@@ -1,11 +1,10 @@
 "use strict"
-
 /* -------------------------------------------------------
-    EXPRESS - Personnel API
+EXPRESS - Personnel API
 ------------------------------------------------------- */
+const Personnel = require("../models/personnel");
+const Token = require('../models/token');
 const passwordEncrypt = require("../helpers/passwordEncrypt");
-const Personnel = require("../models/personnel")
-const Token = require("../models/token");
 
 
 module.exports = {
@@ -14,16 +13,15 @@ module.exports = {
 
         const { username, email, password } = req.body;
 
+        if ((username || email) && password) {
 
-        if ((username && password) || (email && password)) {
-
-            const user = await Personnel.findOne({ $or: [{ username: username }, { email: email }], password })
+            const user = await Personnel.findOne({ $or: [{ username }, { email }], password });
 
             if (user) {
 
                 if (user.isActive) {
 
-                    //! TOKEN 
+                    // /* TOKEN */
 
                     let tokenData = await Token.findOne({ userId: user._id });
 
@@ -31,39 +29,44 @@ module.exports = {
                         tokenData = await Token.create({
                             userId: user._id,
                             token: passwordEncrypt(user._id + Date.now())
-                        })
+                        });
                     }
-
-
-                    //! TOKEN 
+                    /* TOKEN */
 
                     res.status(200).send({
                         error: false,
                         token: tokenData.token,
                         user
-                    })
+                    });
+
                 } else {
                     res.errorStatusCode = 401;
-                    throw new Error("This account is deactive at now.")
+                    throw new Error('User is not active')
                 }
-
-
 
             } else {
                 res.errorStatusCode = 401;
-                throw new Error("wrong email/username or password")
+                throw new Error('Wrong email/username or password')
             }
-
-
 
 
         } else {
             res.errorStatusCode = 401;
-            throw new Error("username or email and password required")
-        }
+            throw new Error('username/email and password required')
+        };
+
+
     },
+
     logout: async (req, res) => {
 
-    }
+        const token = req.user ? await Token.deleteOne({ userId: req.user._id }) : null
+
+        res.status(200).send({
+            error: false,
+            message: token?.deletedCount ? 'User token deleted. Logout Success' : 'Logout Success'
+        });
+
+    },
 
 }
