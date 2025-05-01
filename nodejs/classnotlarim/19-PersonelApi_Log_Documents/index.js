@@ -2,7 +2,7 @@
 /* -------------------------------------------------------
     EXPRESS - Personnel API
 ------------------------------------------------------- */
-/*    
+/*
     $ npm i express dotenv mongoose express-async-errors
     $ npm i cookie-session
     $ npm i jsonwebtoken
@@ -24,18 +24,45 @@ const session = require('cookie-session');
 
 app.use(session({
     secret: process.env.SECRET_KEY,
-}))
+}));
 
 // Query Handler:
-app.use(require('./src/middlewares/queryHandler'))
+app.use(require('./src/middlewares/queryHandler'));
 
 // DB connection
-require("./src/configs/dbConnection")
+require("./src/configs/dbConnection");
 
 // Authentication
 app.use(require('./src/middlewares/authentication'));
 
+// Logger
+app.use(require('./src/middlewares/logger'));
 
+/* ------------------------------------------------------- *
+// Logger
+// npm i morgan
+// https://expressjs.com/en/resources/middleware/morgan.html
+
+const morgan = require('morgan');
+
+// app.use(morgan('tiny')); // default is console.log('...')
+// app.use(morgan('short'));
+// app.use(morgan('dev'));
+// app.use(morgan('common'));
+// app.use(morgan('combined'));
+
+// Custom log:
+// app.use(morgan("TIME=':date[iso]' - URL=':url' - METHOD=':method' - IP=':remote-addr' - STATUS=':status' - SIGN=:user-agent' - (:response-time[digist] ms)"))
+
+const customLog = "TIME=':date[iso]' - URL=':url' - METHOD=':method' - IP=':remote-addr' - STATUS=':status' - SIGN=:user-agent' - (:response-time[digist] ms)"
+const fs = require('node:fs');
+const now = new Date()
+// console.log(now);
+const today = now.toISOString().split('T')[0]
+// console.log(today);
+app.use(morgan(customLog, {
+    stream: fs.createWriteStream(`./logs/${today}.log`, { flags: 'a' })
+}));
 /* ------------------------------------------------------- */
 // Routes:
 app.all('/', (req, res) => {
