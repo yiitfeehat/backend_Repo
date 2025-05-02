@@ -18,7 +18,7 @@
   ],
   "securityDefinitions": {
     "Token": {
-      "type": "basicKey",
+      "type": "apiKey",
       "in": "header",
       "name": "Authorization",
       "description": "Simple Token Authentication * Example Use: <b>Token ...TokenKey...</b>"
@@ -27,15 +27,33 @@
   "paths": {
     "/departments/": {
       "get": {
-        "description": "",
+        "tags": [
+          "Departments"
+        ],
+        "summary": "List Departments",
+        "description": "\r  You can send query with endpoint for search[], sort[], page and limit.\r  <ul> Examples:\r   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>\r   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>\r   <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>\r   <li>URL/?<b>page=2&limit=1</b></li>\r  </ul>\r  ",
         "responses": {
-          "200": {
-            "description": "OK"
+          "default": {
+            "description": ""
           }
         }
       },
       "post": {
+        "tags": [
+          "Departments"
+        ],
+        "summary": "Create Department",
         "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Department"
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created"
@@ -45,6 +63,10 @@
     },
     "/departments/{id}": {
       "get": {
+        "tags": [
+          "Departments"
+        ],
+        "summary": "Get Single Department",
         "description": "",
         "parameters": [
           {
@@ -61,6 +83,10 @@
         }
       },
       "put": {
+        "tags": [
+          "Departments"
+        ],
+        "summary": "Update Department",
         "description": "",
         "parameters": [
           {
@@ -68,6 +94,14 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Department"
+            }
           }
         ],
         "responses": {
@@ -77,6 +111,10 @@
         }
       },
       "delete": {
+        "tags": [
+          "Departments"
+        ],
+        "summary": "Delete Department",
         "description": "",
         "parameters": [
           {
@@ -96,6 +134,10 @@
         }
       },
       "patch": {
+        "tags": [
+          "Departments"
+        ],
+        "summary": "Update Department",
         "description": "",
         "parameters": [
           {
@@ -103,6 +145,14 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Department"
+            }
           }
         ],
         "responses": {
@@ -114,7 +164,11 @@
     },
     "/departments/{id}/personnels": {
       "get": {
-        "description": "",
+        "tags": [
+          "Departments"
+        ],
+        "summary": "List Personnels of Department",
+        "description": "\r   You can send query with endpoint for search[], sort[], page and limit.\r   <ul> Examples:\r   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>\r   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>\r   <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>\r   <li>URL/?<b>page=2&limit=1</b></li>\r   </ul>\r  ",
         "parameters": [
           {
             "name": "id",
@@ -124,34 +178,38 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "default": {
+            "description": ""
           }
         }
       }
     },
     "/personnels/": {
       "get": {
-        "description": "",
+        "tags": [
+          "Personnels"
+        ],
+        "summary": "List Personnels",
+        "description": "\r  You can send query with endpoint for search[], sort[], page and limit.\r  <ul> Examples:\r   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>\r   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>\r   <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>\r   <li>URL/?<b>page=2&limit=1</b></li>\r  </ul>\r  ",
         "responses": {
-          "200": {
-            "description": "OK"
+          "default": {
+            "description": ""
           }
         }
       },
       "post": {
+        "tags": [
+          "Personnels"
+        ],
+        "summary": "Create Personnel",
         "description": "",
         "parameters": [
           {
             "name": "body",
             "in": "body",
+            "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "departmentId": {
-                  "example": "any"
-                }
-              }
+              "$ref": "#/definitions/Personnel"
             }
           }
         ],
@@ -164,6 +222,10 @@
     },
     "/personnels/{id}": {
       "get": {
+        "tags": [
+          "Personnels"
+        ],
+        "summary": "Get Single Personnel",
         "description": "",
         "parameters": [
           {
@@ -180,6 +242,10 @@
         }
       },
       "put": {
+        "tags": [
+          "Personnels"
+        ],
+        "summary": "Update Personnel",
         "description": "",
         "parameters": [
           {
@@ -187,6 +253,14 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Personnel"
+            }
           }
         ],
         "responses": {
@@ -196,6 +270,10 @@
         }
       },
       "delete": {
+        "tags": [
+          "Personnels"
+        ],
+        "summary": "Delete Personnel",
         "description": "",
         "parameters": [
           {
@@ -215,6 +293,10 @@
         }
       },
       "patch": {
+        "tags": [
+          "Personnels"
+        ],
+        "summary": "Update Personnel",
         "description": "",
         "parameters": [
           {
@@ -222,93 +304,14 @@
             "in": "path",
             "required": true,
             "type": "string"
-          }
-        ],
-        "responses": {
-          "202": {
-            "description": "Accepted"
-          }
-        }
-      }
-    },
-    "/tokens/": {
-      "get": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "post": {
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "Created"
-          }
-        }
-      }
-    },
-    "/tokens/{id}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "202": {
-            "description": "Accepted"
-          }
-        }
-      },
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
           },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      },
-      "patch": {
-        "description": "",
-        "parameters": [
           {
-            "name": "id",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/Personnel"
+            }
           }
         ],
         "responses": {
@@ -320,27 +323,45 @@
     },
     "/auth/login": {
       "post": {
-        "description": "",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Login",
+        "description": "Login with email/username and password",
         "parameters": [
           {
             "name": "body",
             "in": "body",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "username": {
-                  "example": "any"
-                },
-                "email": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "admin"
                 },
                 "password": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "1234"
                 }
               }
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Logout",
+        "description": "Deleted Token",
         "responses": {
           "200": {
             "description": "OK"
@@ -626,7 +647,7 @@
             },
             "default": {
               "type": "number",
-              "example": 1746121456470
+              "example": 1746124050687
             },
             "required": {
               "type": "boolean",

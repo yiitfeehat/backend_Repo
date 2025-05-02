@@ -38,6 +38,28 @@ app.use(require('./src/middlewares/authentication'));
 // Logger
 app.use(require('./src/middlewares/logger'));
 
+// DOCUMENTATION:
+// $ npm i swagger-autogen # JSON Creator // https://swagger-autogen.github.io/docs/
+// $ npm i swagger-ui-express // https://swagger.io/docs/open-source-tools/swagger-ui/usage/installation/
+// $ npm i redoc-express // https://www.npmjs.com/package/redoc-express
+
+
+// Json
+app.use('/documents/json', (req, res) => {
+    res.sendFile('/src/configs/swagger.json', { root: '.' })
+});
+
+// Swagger 
+const swaggerUi = require('swagger-ui-express');
+const swaggerJson = require('./src/configs/swagger.json');
+app.use('/documents/swagger', swaggerUi.serve, swaggerUi.setup(swaggerJson, { swaggerOptions: { persistAuthorization: true } }));
+
+// Redoc
+const redoc = require('redoc-express');
+app.use('/documents/redoc', redoc({ specUrl: '/documents/json', title: 'Redoc UI' }));
+
+
+// logger
 /* ------------------------------------------------------- *
 // Logger
 // npm i morgan
@@ -64,6 +86,8 @@ app.use(morgan(customLog, {
     stream: fs.createWriteStream(`./logs/${today}.log`, { flags: 'a' })
 }));
 /* ------------------------------------------------------- */
+
+
 // Routes:
 app.all('/', (req, res) => {
 

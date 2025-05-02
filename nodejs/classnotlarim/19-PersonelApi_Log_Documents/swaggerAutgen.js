@@ -21,7 +21,7 @@ const options = {
 
 
 // const swagerAutogen = require('swagger-autogen')({ openapi: '3.1.0', language: 'tr-TR' })
-const swagerAutogen = require('swagger-autogen')()
+const swaggerAutogen = require('swagger-autogen')()
 
 const packageJson = require('./package.json');
 
@@ -53,7 +53,7 @@ const document = {
     schemes: ['http', 'https'],
     securityDefinitions: {
         Token: {
-            type: 'basicKey',
+            type: 'apiKey',
             in: 'header',
             name: 'Authorization',
             description: 'Simple Token Authentication * Example Use: <b>Token ...TokenKey...</b>',
@@ -69,5 +69,5 @@ const document = {
 };
 
 // To run swaggerAutgen: node swaggerAutogen.js
-// swagerAutogen(outputFile, routes, document)
-swagerAutogen('./src/configs/swagger.json', ['./index.js'], document);
+// swaggerAutogen(outputFile, routes, document)
+swaggerAutogen('./src/configs/swagger.json', ['./index.js'], document);
