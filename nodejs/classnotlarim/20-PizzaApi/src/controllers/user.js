@@ -43,14 +43,14 @@ module.exports = {
          #swagger.summary = 'Create User'
          */
 
-        // Password Validation
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
-        if (!passwordRegex.test(req.body.password)) {
-            return res.status(401).send({
-                error: true,
-                message: "Password must be at least 8 characters long and contain at least one special character and at least one uppercase character."
-            });
-        }
+        //! // Password Validation
+        // const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+        // if (!passwordRegex.test(req.body.password)) {
+        //     return res.status(401).send({
+        //         error: true,
+        //         message: "Password must be at least 8 characters long and contain at least one special character and at least one uppercase character."
+        //     });
+        //! }
 
         try {
             const result = await User.create(req.body);
