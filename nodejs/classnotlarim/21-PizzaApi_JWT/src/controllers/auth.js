@@ -73,6 +73,7 @@ module.exports = {
                 access: accessToken,
                 refresh: refreshToken
             },
+            simpleToken: tokenData.token,
             message: "ok kanka girdin"
         })
     },
