@@ -43,6 +43,15 @@ module.exports = {
          #swagger.summary = 'Create Order'
          */
 
+        const pizza = await Pizza.findOne({ _id: req?.body?.pizzaId });
+        if (!pizza) {
+            return res.status(404).send({
+                error: true,
+                message: "Pizza not found!"
+            });
+        }
+        req.body.price = pizza.price;
+
         try {
             const result = await Order.create(req.body);
             res.status(201).send({
