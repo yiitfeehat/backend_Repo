@@ -22,9 +22,9 @@ module.exports = {
           `
         */
         try {
-            const result = await res.getModelList(Pizza, "toppingsIds")
+            const result = await res.getModelList(Pizza)
             // Populate the toppingsIds field with the corresponding topping documents
-            const details = await res.getModelListDetails(Pizza, "toppingsIds")
+            const details = await res.getModelListDetails(Pizza)
             // Send the response with the populated toppingsIds field
 
             res.status(200).send({ error: false, details, result })
