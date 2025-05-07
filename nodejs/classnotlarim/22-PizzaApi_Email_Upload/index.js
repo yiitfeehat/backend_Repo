@@ -49,6 +49,45 @@ app.use(require('./src/middlewares/authentication'))
 app.use(require('./src/middlewares/queryHandler'))
 
 /* ------------------------------------------------------- */
+// EMAİL
+// npm i nodemailer
+
+const nodemailer = require('nodemailer')
+/* send email with ethereal */
+// nodemailer.createTestAccount().then(email=> console.log(email))
+// {
+//     user: 'qmu26px4mff5r6qk@ethereal.email',
+//     pass: 'bA6Tdec3y1F3QaKQSm',
+//     smtp: { host: 'smtp.ethereal.email', port: 587, secure: false },
+//     imap: { host: 'imap.ethereal.email', port: 993, secure: true },
+//     pop3: { host: 'pop3.ethereal.email', port: 995, secure: true },
+//     web: 'https://ethereal.email',
+//         mxEnabled: false
+// }
+
+// Connect to MailServer / STMP:
+// const transporter = nodemailer.createTransport({
+//     host: 'smtp.ethereal.email',
+//     port: 587,
+//     secure: false,
+//     auth: {
+//         user: 'qmu26px4mff5r6qk@ethereal.email',
+//         pass: 'bA6Tdec3y1F3QaKQSm',
+//     }
+// });
+
+// // Send Mail:
+// transporter.sendMail({
+//     from: 'qmu26px4mff5r6qk@ethereal.email',
+//     to: 'yiitferhat@gmail.com',
+//     subject: 'Hi There',
+//     html: "<p style='text-color:red' >Hello there, how are you <b>today</b> </p>",
+//     text: "Hello there, \n how are you today"
+// }, function (error, success) {
+//     success ? console.log('SUCCESS:', success) : console.log('ERROR:', error);
+// });
+
+/* ------------------------------------------------------- */
 // Routes:
 
 // routes/index.js:
