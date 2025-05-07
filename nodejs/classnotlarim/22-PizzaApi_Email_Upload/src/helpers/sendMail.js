@@ -5,13 +5,12 @@
 const transporter = require("../configs/nodemailler")
 
 
-module.exports = function sendMail(to, subject, message) {
+module.exports = function sendMail(to, subject, tempFnc, data = null) {
     transporter.sendMail({
         from: process.env.ADMIN_EMAIL,
         to,
         subject,
-        html: message,
-        text: message
+        html: data ? tempFnc(data) : tempFnc(),
     }, function (error, success) {
         success ? console.log('SUCCESS:', success) : console.log('ERROR:', error);
     });

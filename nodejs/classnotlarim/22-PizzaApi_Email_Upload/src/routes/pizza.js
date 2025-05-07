@@ -4,10 +4,10 @@
 ------------------------------------------------------- */
 const router = require('express').Router()
 const { list, create, read, update, deletePizza } = require('../controllers/pizza')
-/* ------------------------------------------------------- */
+const upload = require("../middlewares/upload")/* ------------------------------------------------------- */
 router.route('/')
     .get(list) // List Users
-    .post(create) // Create User
+    .post(upload.single("image"), create) // Create User
 
 router.route('/:id')
     .get(read) // Get User by ID

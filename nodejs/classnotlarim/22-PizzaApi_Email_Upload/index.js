@@ -133,7 +133,12 @@ app.all('/', (req, res) => {
         },
         user: req.user,
     })
-})
+});
+
+// Static Route for images
+const path = require('node:path');
+app.use('/images', express.static(path.join(__dirname, 'uploads')));
+
 
 /* ------------------------------------------------------- */
 

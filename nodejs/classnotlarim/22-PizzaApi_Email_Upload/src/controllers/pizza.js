@@ -8,32 +8,16 @@ module.exports = {
 
     // List all pizzas
     list: async (req, res) => {
-        /*
-          #swagger.tags = ['Pizzas']
-          #swagger.summary = 'List all pizzas'
-          #swagger.description = `
-              Supports query params: filter[], search[], sort[], page, limit
-              <ul> Examples:
-                  <li>?filter[name]=Margherita</li>
-                  <li>?search[name]=cheese</li>
-                  <li>?sort[price]=-1</li>
-                  <li>?page=2&limit=5</li>
-              </ul>
-          `
-        */
         try {
-            const result = await res.getModelList(Pizza)
-            // Populate the toppingsIds field with the corresponding topping documents
-            const details = await res.getModelListDetails(Pizza)
-            // Send the response with the populated toppingsIds field
-
-            res.status(200).send({ error: false, details, result })
+            const result = await res.getModelList(Pizza, {}, "toppingsIds");
+            const details = await res.getModelListDetails(Pizza);
+            res.status(200).send({ error: false, details, result });
         } catch (error) {
             res.status(500).send({
                 error: true,
                 message: "An error occurred while fetching the pizzas.",
                 details: error.message
-            })
+            });
         }
     },
 
@@ -44,24 +28,34 @@ module.exports = {
           #swagger.summary = 'Create a new pizza'
         */
 
-        req.body.toppingsIds = [...new Set(req.body.toppingsIds)] // Remove duplicates from toppingsIds array
         try {
-            const result = await Pizza.create(req.body)
-            res.status(201).send({ error: false, result })
+            // Eğer dosya yüklenmişse, dosya yolunu req.body.image'e ekle
+            if (req.file) {
+                req.body.image = req.file.path; // Yüklenen dosyanın yolu
+            }
+
+            // toppingsIds'deki duplicate'leri kaldır
+            if (req.body.toppingsIds) {
+                req.body.toppingsIds = [...new Set(req.body.toppingsIds)];
+            }
+
+            // Pizza oluştur
+            const result = await Pizza.create(req.body);
+            res.status(201).send({ error: false, result });
         } catch (error) {
             res.status(500).send({
                 error: true,
                 message: "An error occurred while creating the pizza.",
                 details: error.message
-            })
+            });
         }
     },
 
     // Get a single pizza by ID
     read: async (req, res) => {
         /*
-          #swagger.tags = ['Pizzas']
-          #swagger.summary = 'Get a pizza by ID'
+        #swagger.tags = ['Pizzas']
+        #swagger.summary = 'Get a pizza by ID'
         */
         try {
             const result = await Pizza.findById(req.params.id).populate('toppingsIds')

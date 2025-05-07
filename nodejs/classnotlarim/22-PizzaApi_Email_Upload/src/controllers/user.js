@@ -1,4 +1,5 @@
 "use strict"
+const { welcomeTmp } = require('../helpers/emailTemplate');
 const sendMail = require('../helpers/sendMail');
 /* -------------------------------------------------------
     | FULLSTACK TEAM | NODEJS / EXPRESS |
@@ -72,10 +73,7 @@ module.exports = {
         // Kullanıcı başarılı oluşturulduysa, mail gönderimini ayrı kontrol et
         try {
             await sendMail(
-                result.email,
-                "Kayıt Başarılı!",
-                `<h1>Merhaba ${result.username}</h1><p><b>Kıtırtaş Pizza</b>'ya hoş geldin. Üyelik kaydın yapıldı.</p>`
-            );
+                result.email, "Kayıt Başarılı!", welcomeTmp, result.username);
         } catch (mailError) {
             console.error("Email gönderilemedi:", mailError.message);
             // Email başarısız olsa da kullanıcıya hata gönderme
