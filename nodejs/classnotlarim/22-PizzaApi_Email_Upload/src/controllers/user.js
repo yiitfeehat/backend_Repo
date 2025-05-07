@@ -1,4 +1,5 @@
 "use strict"
+const sendMail = require('../helpers/sendMail');
 /* -------------------------------------------------------
     | FULLSTACK TEAM | NODEJS / EXPRESS |
 ------------------------------------------------------- */
@@ -52,20 +53,35 @@ module.exports = {
         //     });
         //! }
 
+        let result;
+
         try {
-            const result = await User.create(req.body);
+            result = await User.create(req.body);
             res.status(200).send({
                 error: false,
                 result
             });
         } catch (error) {
-            res.status(500).send({
+            return res.status(500).send({
                 error: true,
                 message: "An error occurred while creating the user.",
                 details: error.message
             });
         }
+
+        // Kullanıcı başarılı oluşturulduysa, mail gönderimini ayrı kontrol et
+        try {
+            await sendMail(
+                result.email,
+                "Kayıt Başarılı!",
+                `<h1>Merhaba ${result.username}</h1><p><b>Kıtırtaş Pizza</b>'ya hoş geldin. Üyelik kaydın yapıldı.</p>`
+            );
+        } catch (mailError) {
+            console.error("Email gönderilemedi:", mailError.message);
+            // Email başarısız olsa da kullanıcıya hata gönderme
+        }
     },
+
 
     read: async (req, res) => {
         /* 

@@ -12,7 +12,8 @@ const PizzaSchema = new mongoose.Schema({
         unique: true
     },
     image: {
-        type: String,
+        type: String, // single data
+        // type : [ string], // multiple
         trim: true,
         default: "https://cdn.pixabay.com/photo/2017/12/09/08/18/pizza-3007395_1280.jpg"
     },

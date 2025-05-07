@@ -87,6 +87,34 @@ const nodemailer = require('nodemailer')
 //     success ? console.log('SUCCESS:', success) : console.log('ERROR:', error);
 // });
 
+
+//? Send EMAİL WITH GMAIL SERVICE
+// Google -> AccountHome -> Security -> Two-Step-Verify (make it on) -> App-Passwords (if not showing use this link: https://myaccount.google.com/apppasswords)
+
+// eixo rcbk lcpn egsd
+// const transporter = nodemailer.createTransport({
+//     service: "gmail",
+//     auth: {
+//         user: 'yiitferhat@gmail.com',
+//         pass: '-deleted-',
+//     }
+// });
+
+// // Send Mail:
+// transporter.sendMail({
+//     from: "yiitferhat@gmail.com",
+//     to: 'yiitferhat@gmail.com',
+//     subject: 'Hi There',
+//     html: "<p style='text-color:red' >Hello there, how are you <b>today</b> </p>",
+//     text: "Hello there, \n how are you today"
+// }, function (error, success) {
+//     success ? console.log('SUCCESS:', success) : console.log('ERROR:', error);
+// });
+
+
+
+
+//? Send EMAİL WITH GMAIL SERVICE
 /* ------------------------------------------------------- */
 // Routes:
 
