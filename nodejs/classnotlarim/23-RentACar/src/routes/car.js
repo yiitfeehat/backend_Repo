@@ -4,5 +4,24 @@
 ------------------------------------------------------- */
 const router = require("express").Router();
 /* ------------------------------------------------------- */
+
+const permissions = require("../middlewares/permissions")
+const car = require("../controllers/car")
 // routes/car:
+
+router
+    .route("/")
+    .get(permissions.isStaffOrisAdmin, car.list)
+    .post(car.create)
+
+router
+    .route("/:id")
+    .get(permissions.isLogin, car.read)
+    .put(permissions.isLogin, car.update)
+    .patch(permissions.isLogin, car.update)
+    .delete(permissions.isLogin, car.deletee)
+
+
+
+
 module.exports = router;

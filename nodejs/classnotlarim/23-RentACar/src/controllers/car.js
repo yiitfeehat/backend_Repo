@@ -100,7 +100,7 @@ module.exports = {
 
   },
 
-  delete: async (req, res) => {
+  deletee: async (req, res) => {
    
             /*
             #swagger.tags = ["Cars"]
