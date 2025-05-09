@@ -62,7 +62,7 @@ const CarSchema = new mongoose.Schema(
       default:false
     },
 
-    pricePerday:{
+    pricePerDay:{
       type:Number,
       required:true
     },
