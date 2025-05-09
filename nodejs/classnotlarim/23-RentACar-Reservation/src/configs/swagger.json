@@ -684,7 +684,7 @@
             }
           }
         },
-        "pricePerday": {
+        "pricePerDay": {
           "type": "object",
           "properties": {
             "type": {

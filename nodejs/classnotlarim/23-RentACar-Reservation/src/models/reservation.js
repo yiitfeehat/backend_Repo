@@ -54,13 +54,18 @@ const ReservationSchema = new mongoose.Schema(
   }
 );
 
-ReservationSchema.set("toJSON",{
-  transform:(doc,ret)=>{
-    // ret.id=ret._id;
-    // ret.startDate=dateToLocaleString(ret.startDate);
+ReservationSchema.set("toJSON", {
+  transform: (doc, ret) => {
+    ret.id = ret._id;
+
+    ret.startDate = dateToLocaleString(ret.startDate);
+    ret.endDate = dateToLocaleString(ret.endDate);
+    ret.createdAt = dateToLocaleString(ret.createdAt);
+    ret.updatedAt = dateToLocaleString(ret.updatedAt);
+
     delete ret._v;
-  }
-})
+  },
+});
 
 // Export:
 
