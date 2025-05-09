@@ -15,6 +15,7 @@
 const { mongoose } = require("../configs/dbConnection");
 const passwordEncrypt = require("../helpers/passwordEncrypt");
 const uniqueValidator = require("mongoose-unique-validator");
+const emailValidator = require("../helpers/emailValidation")
 // User Model:
 const UserSchema = new mongoose.Schema(
   {
@@ -30,7 +31,9 @@ const UserSchema = new mongoose.Schema(
       trim: true,
       required: true,
       set: (password) => passwordEncrypt(password),
-      // selected:false
+      //  Validation Controllerda 
+      // user.find({ filter }, { select })
+      // select: false
     },
 
     email: {
@@ -39,11 +42,7 @@ const UserSchema = new mongoose.Schema(
       required: [true, "An Email address is required"],
       unique: [true, "There is this email. Email field must be unique"],
       validate: [
-        (email) => {
-          const regexEmailCheck =
-            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-          return regexEmailCheck.test(email);
-        },
+        (email) => emailValidator(email),
         "Email format is not valid",
       ],
     },
