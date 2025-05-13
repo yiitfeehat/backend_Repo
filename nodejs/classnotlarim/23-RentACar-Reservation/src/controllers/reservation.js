@@ -1,4 +1,5 @@
 "use strict"
+const CustomError = require('../errors/customError')
 /* -------------------------------------------------------
     | FULLSTACK TEAM | NODEJS / EXPRESS |
 ------------------------------------------------------- */
@@ -59,6 +60,41 @@ module.exports = {
         } else if (!req.body.userId) {
             req.body.userId = req.user._id
         }
+
+        //StartDate ve endDate yaklaayıp uygun araç bulacağız.
+
+        const { startDate, endDate, reservedDays } = dateValidation(req.body?.startDate, req.body?.endDate)
+
+
+
+
+        //Çakışanlar bulundu
+        const reservedCarIds = await Reservation.find({
+            carId: req.body.carId,
+            startDate: { $lte: endDate },
+            endDate: { $gte: startDate }
+
+        })
+
+        if (reservedCarIds) {
+            throw new CustomError("The car is already for the given dates", 400)
+        }
+
+        const userReservedCarInDates = await Reservation.find({
+            userId: req.body.userId,
+            startDate: { $lte: endDate },
+            endDate: { $gte: startDate }
+        })
+
+        if (userReservedCarInDates) {
+            throw new CustomError("This user is already reserved a car in given days", 400)
+        }
+
+        const dailyCost = await Car.findOne({ _id: req.body?.carId }, { _id: 0, pricePerDay: 1 }).then((car) => Number(car.pricePerDay))
+
+        // Amount için pricePerDay* reservedDays
+        req.body.amount = dailyCost * reservedDays
+
 
         const data = await Reservation.create(req.body)
 
