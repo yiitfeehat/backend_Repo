@@ -1,168 +1,198 @@
-"use strict"
-const CustomError = require('../errors/customError')
+"use strict";
+const CustomError = require('../errors/customError');
+const Reservation = require('../models/reservation');
+const Car = require('../models/car'); // Missing Car model import
+const dateValidation = require('../helpers/dateValidation');
+
 /* -------------------------------------------------------
     | FULLSTACK TEAM | NODEJS / EXPRESS |
 ------------------------------------------------------- */
-// Reservation Controller:
 
-// Model:
-const Reservation = require('../models/reservation')
-
+// Reservation Controller
 module.exports = {
 
-    list: async (req, res) => {
+    // 🚗 List Reservations
+    list: async (req, res, next) => {
         /*
          #swagger.tags = ["Reservations"]
          #swagger.summary = "List Reservations"
          #swagger.description = `
-             You can send query with endpoint for search[], sort[], page and limit.
+             You can send query with endpoint for search[], sort[], page, and limit.
              <ul> Examples:
-                 <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>
-                 <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>
-                 <li>URL/?<b>page=2&limit=1</b></li>
+                 <li>?search[field1]=value1&search[field2]=value2</li>
+                 <li>?sort[field1]=1&sort[field2]=-1</li>
+                 <li>?page=2&limit=1</li>
              </ul>
          `
-     */
-        let customFilter = {}
+        */
+        try {
+            // If the user is neither Admin nor Staff, filter by userId
+            const customFilter = !req.user.isAdmin && !req.user.isStaff ? { userId: req.user._id } : {};
 
-        if (!req.user.isAdmin || !req.user.isStaff) customFilter = { userId: req.user._id }
+            const data = await res.getModelList(Reservation, customFilter, [
+                { path: "userId", select: "username firstName lastName" },
+                { path: "carId", select: "brand model" },
+                { path: "createdId", select: "username" },
+                { path: "updatedId", select: "username" },
+            ]);
 
-        const data = await res.getModelList(Reservation, customFilter, [
-            { path: "userId", select: "username firstName lastName" },
-            { path: "carId", select: "brand model" },
-            { path: "createdId", select: "username" },
-            { path: "updatedId", select: "username" },
-        ])
-
-        res.status(200).send({
-            error: false,
-            details: await res.getModelListDetails(Reservation),
-            data
-        })
+            res.status(200).send({
+                error: false,
+                details: await res.getModelListDetails(Reservation),
+                data
+            });
+        } catch (err) {
+            next(err); // Passing error to the error handler middleware
+        }
     },
 
-    create: async (req, res) => {
+    // 🚗 Create a Reservation
+    create: async (req, res, next) => {
         /*
            #swagger.tags = ["Reservations"]
            #swagger.summary = "Create Reservation"
            #swagger.parameters['body'] = {
                in: 'body',
                required: true,
-               schema:{
-               $ref:"#/definitions/Reservation"
-               }
-             
+               schema: { $ref: "#/definitions/Reservation" }
            }
-       */
+        */
+        try {
+            // Assigning userId to body based on user role
+            if (!req.user.isAdmin && !req.user.isStaff) {
+                req.body.userId = req.user._id; // Regular user is booking for themselves
+            } else if (!req.body.userId) {
+                req.body.userId = req.user._id; // If no userId provided, use current user's ID
+            }
 
-        if (!req.user.isAdmin || !req.user.isStaff) {
-            req.body.userId = req.user._id
-        } else if (!req.body.userId) {
-            req.body.userId = req.user._id
+            // Validate startDate and endDate
+            const { startDate, endDate, reservedDays } = dateValidation(req.body?.startDate, req.body?.endDate);
+
+            // Check if the car is reserved for the given dates
+            const reservedCarIds = await Reservation.find({
+                carId: req.body.carId,
+                startDate: { $lte: endDate },
+                endDate: { $gte: startDate }
+            });
+
+            if (reservedCarIds.length > 0) {
+                throw new CustomError("The car is already reserved for the given dates", 400);
+            }
+
+            // Check if the user has any other reservation during the given dates
+            const userReservedCarInDates = await Reservation.find({
+                userId: req.body.userId,
+                startDate: { $lte: endDate },
+                endDate: { $gte: startDate }
+            });
+
+            if (userReservedCarInDates.length > 0) {
+                throw new CustomError("This user has already reserved a car in the given days", 400);
+            }
+
+            // Get the car's price per day and calculate the amount
+            const car = await Car.findById(req.body?.carId).select('pricePerDay');
+            const dailyCost = car ? Number(car.pricePerDay) : 0;
+
+            if (dailyCost === 0) {
+                throw new CustomError("Car not found or invalid pricing", 404);
+            }
+
+            req.body.amount = dailyCost * reservedDays;
+
+            // Create reservation
+            const data = await Reservation.create(req.body);
+
+            res.status(201).send({
+                error: false,
+                data
+            });
+
+        } catch (err) {
+            next(err); // Pass the error to error handler middleware
         }
-
-        //StartDate ve endDate yaklaayıp uygun araç bulacağız.
-
-        const { startDate, endDate, reservedDays } = dateValidation(req.body?.startDate, req.body?.endDate)
-
-
-
-
-        //Çakışanlar bulundu
-        const reservedCarIds = await Reservation.find({
-            carId: req.body.carId,
-            startDate: { $lte: endDate },
-            endDate: { $gte: startDate }
-
-        })
-
-        if (reservedCarIds) {
-            throw new CustomError("The car is already for the given dates", 400)
-        }
-
-        const userReservedCarInDates = await Reservation.find({
-            userId: req.body.userId,
-            startDate: { $lte: endDate },
-            endDate: { $gte: startDate }
-        })
-
-        if (userReservedCarInDates) {
-            throw new CustomError("This user is already reserved a car in given days", 400)
-        }
-
-        const dailyCost = await Car.findOne({ _id: req.body?.carId }, { _id: 0, pricePerDay: 1 }).then((car) => Number(car.pricePerDay))
-
-        // Amount için pricePerDay* reservedDays
-        req.body.amount = dailyCost * reservedDays
-
-
-        const data = await Reservation.create(req.body)
-
-        res.status(201).send({
-            error: false,
-            data
-        })
-
     },
 
-    read: async (req, res) => {
+    // 🚗 Get a Single Reservation
+    read: async (req, res, next) => {
         /*
          #swagger.tags = ["Reservations"]
          #swagger.summary = "Get Single Reservation"
-     */
+        */
+        try {
+            const customFilter = !req.user.isAdmin && !req.user.isStaff ? { userId: req.user._id } : {};
 
-        let customFilter = {}
+            const data = await Reservation.findOne({ _id: req.params.id, ...customFilter })
+                .populate([
+                    { path: "userId", select: "username firstName lastName" },
+                    { path: "carId", select: "brand model" },
+                    { path: "createdId", select: "username" },
+                    { path: "updatedId", select: "username" }
+                ]);
 
-        if (!req.user.isAdmin || !req.user.isStaff) customFilter = { userId: req.user._id }
+            if (!data) {
+                throw new CustomError("Reservation not found", 404);
+            }
 
-        const data = await Car.findOne({ _id: req.params.id }).populate([
-            { path: "createdId", select: "username" },
-            { path: "updatedId", select: "username" }
-        ])
-
-        res.status(200).send({
-            error: false,
-            data
-        })
-
+            res.status(200).send({
+                error: false,
+                data
+            });
+        } catch (err) {
+            next(err); // Pass the error to the error handler middleware
+        }
     },
 
-    update: async (req, res) => {
+    // 🚗 Update a Reservation
+    update: async (req, res, next) => {
         /*
             #swagger.tags = ["Reservations"]
             #swagger.summary = "Update Reservation"
             #swagger.parameters['body'] = {
                 in: 'body',
                 required: true,
-                schema: {
-                   $ref:"#/definitions/Reservation"
-                }
+                schema: { $ref: "#/definitions/Reservation" }
             }
         */
+        try {
+            const updated = await Reservation.updateOne({ _id: req.params.id }, req.body, { runValidators: true });
 
+            if (!updated.modifiedCount) {
+                throw new CustomError("Reservation update failed", 400);
+            }
 
-        const data = await Reservation.updateOne({ _id: req.params.id }, req.body, { runValidators: true })
+            const newData = await Reservation.findById(req.params.id);
 
-        res.status(202).send({
-            error: false,
-            data,
-            new: await Reservation.findOne({ _id: req.params.id })
-        })
-
+            res.status(202).send({
+                error: false,
+                data: updated,
+                new: newData
+            });
+        } catch (err) {
+            next(err); // Pass the error to the error handler middleware
+        }
     },
 
-    delete: async (req, res) => {
+    // 🚗 Delete a Reservation
+    delete: async (req, res, next) => {
         /*
-        #swagger.tags = ["Reservations"]
-        #swagger.summary = "Delete Reservation"
-    */
+            #swagger.tags = ["Reservations"]
+            #swagger.summary = "Delete Reservation"
+        */
+        try {
+            const result = await Reservation.deleteOne({ _id: req.params.id });
 
-        const data = await Reservation.deleteOne({ _id: req.params.id })
+            if (!result.deletedCount) {
+                throw new CustomError("Reservation not found or already deleted", 404);
+            }
 
-        res.status(data.deletedCount ? 204 : 404).send({
-            error: !data.deletedCount,
-            data
-        })
+            res.status(204).send({
+                error: false,
+                message: "Reservation successfully deleted"
+            });
 
-    },
-}
+        } catch (err) {
+            next(err); // Pass the error to error handler middleware
+        }
+    }
+};

@@ -8,59 +8,57 @@
 const Car = require("../models/car");
 const Reservation = require("../models/reservation");
 const dateValidation = require("../helpers/dateValidation");
+const CustomError = require("../errors/customError");
 
 module.exports = {
     // 🚗 List Available Cars in Given Date Range
     list: async (req, res, next) => {
         /*
-          #swagger.tags = ["Cars"]
-          #swagger.summary = "List Cars"
-          #swagger.description = `
-            You can send query with endpoint for search[], sort[], page and limit.
-            <ul> Examples:
-              <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>
-              <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>
-              <li>URL/?<b>page=2&limit=1</b></li>
-            </ul>
-          `
+            #swagger.tags = ["Cars"]
+            #swagger.summary = "List Cars"
+            #swagger.description = `
+                List cars with optional search, sort, pagination.
+                <ul> Examples:
+                    <li>?search[field1]=value1&search[field2]=value2</li>
+                    <li>?sort[field1]=1&sort[field2]=-1</li>
+                    <li>?page=2&limit=10</li>
+                </ul>
+            `
         */
-
         try {
-            let customFilter = { isAvailable: true };
-
             const { startDate, endDate } = req.query;
 
-            // Tarih kontrolü yapılmazsa aşağıdaki sorgu boşa dönebilir
             if (!startDate || !endDate) {
-                res.errorStatusCode = 400;
-                throw new Error("ValidationError: 'startDate' and 'endDate' are required.");
+                throw new CustomError("ValidationError: 'startDate' and 'endDate' are required.", 400);
             }
 
-            // Tarih doğrulaması
             dateValidation(startDate, endDate);
 
             const startDateObj = new Date(startDate);
             const endDateObj = new Date(endDate);
 
-            // Verilen tarih aralığında zaten rezerve edilmiş araç ID'lerini bul
+            // Find reserved car IDs for given date range
             const reservedCarIds = await Reservation.find(
                 {
                     startDate: { $lte: endDateObj },
                     endDate: { $gte: startDateObj }
                 },
-                { carId: 1, _id: 0 }
+                { carId: 1 }
             ).distinct("carId");
 
-            // Bu araçları hariç tut
-            customFilter._id = { $nin: reservedCarIds };
+            const filter = {
+                isAvailable: true,
+                _id: { $nin: reservedCarIds }
+            };
 
-            // Listele
-            const data = await res.getModelList(Car, customFilter, ["createdId"], ["updatedId"]);
-            console.log("Rezerve Araçlar:", reservedCarIds);
+            const data = await res.getModelList(Car, filter, [
+                { path: "createdId", select: "username" },
+                { path: "updatedId", select: "username" }
+            ]);
 
             res.status(200).send({
                 error: false,
-                details: await res.getModelListDetails(Car, customFilter),
+                details: await res.getModelListDetails(Car, filter),
                 data
             });
 
@@ -73,17 +71,15 @@ module.exports = {
     // 🚗 Create a New Car
     create: async (req, res, next) => {
         /*
-          #swagger.tags = ["Cars"]
-          #swagger.summary = "Create Car"
-          #swagger.parameters['body'] = {
-            in: 'body',
-            required: true,
-            schema: { $ref: "#/definitions/Car" }
-          }
+            #swagger.tags = ["Cars"]
+            #swagger.summary = "Create Car"
+            #swagger.parameters['body'] = {
+                in: 'body',
+                required: true,
+                schema: { $ref: "#/definitions/Car" }
+            }
         */
-
         try {
-            // Güvenlik için manuel gelen ID'leri sil
             delete req.body.createdId;
             delete req.body.updatedId;
 
@@ -100,65 +96,77 @@ module.exports = {
             });
 
         } catch (err) {
-            res.errorStatusCode = 400;
-            next(err);
+            next(new CustomError(`${err}`, 400));
         }
-    }
-
-    ,
-
-    read: async (req, res) => {
-        /*
-         #swagger.tags = ["Cars"]
-         #swagger.summary = "Get Single Car"
-     */
-
-
-        const data = await Car.findOne({ _id: req.params.id })
-
-        res.status(200).send({
-            error: false,
-            data
-        })
-
     },
 
-    update: async (req, res) => {
+    // 🚗 Get a Single Car
+    read: async (req, res, next) => {
+        /*
+            #swagger.tags = ["Cars"]
+            #swagger.summary = "Get Single Car"
+        */
+        try {
+            const data = await Car.findById(req.params.id);
+
+            if (!data) {
+                throw new CustomError("Car not found", 404);
+            }
+
+            res.status(200).send({
+                error: false,
+                data
+            });
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    // 🚗 Update a Car
+    update: async (req, res, next) => {
         /*
             #swagger.tags = ["Cars"]
             #swagger.summary = "Update Car"
             #swagger.parameters['body'] = {
                 in: 'body',
                 required: true,
-                schema: {
-                   $ref:"#/definitions/Car"
-                }
+                schema: { $ref: "#/definitions/Car" }
             }
         */
+        try {
+            const updated = await Car.updateOne(
+                { _id: req.params.id },
+                req.body,
+                { runValidators: true }
+            );
 
+            const newData = await Car.findById(req.params.id);
 
-        const data = await Car.updateOne({ _id: req.params.id }, req.body, { runValidators: true })
-
-        res.status(202).send({
-            error: false,
-            data,
-            new: await Car.findOne({ _id: req.params.id })
-        })
-
+            res.status(202).send({
+                error: false,
+                data: updated,
+                new: newData
+            });
+        } catch (err) {
+            next(new CustomError(`${err}`, 400));
+        }
     },
 
-    delete: async (req, res) => {
+    // 🚗 Delete a Car
+    delete: async (req, res, next) => {
         /*
-        #swagger.tags = ["Cars"]
-        #swagger.summary = "Delete Car"
-    */
+            #swagger.tags = ["Cars"]
+            #swagger.summary = "Delete Car"
+        */
+        try {
+            const result = await Car.deleteOne({ _id: req.params.id });
 
-        const data = await Car.deleteOne({ _id: req.params.id })
-
-        res.status(data.deletedCount ? 204 : 404).send({
-            error: !data.deletedCount,
-            data
-        })
-
-    },
-}
+            res.status(result.deletedCount ? 204 : 404).send({
+                error: !result.deletedCount,
+                data: result
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+};
