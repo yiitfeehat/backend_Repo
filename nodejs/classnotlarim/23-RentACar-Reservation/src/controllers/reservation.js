@@ -26,7 +26,12 @@ module.exports = {
 
         if (!req.user.isAdmin || !req.user.isStaff) customFilter = { userId: req.user._id }
 
-        const data = await res.getModelList(Reservation, customFilter)
+        const data = await res.getModelList(Reservation, customFilter, [
+            { path: "userId", select: "username firstName lastName" },
+            { path: "carId", select: "brand model" },
+            { path: "createdId", select: "username" },
+            { path: "updatedId", select: "username" },
+        ])
 
         res.status(200).send({
             error: false,
@@ -74,7 +79,10 @@ module.exports = {
 
         if (!req.user.isAdmin || !req.user.isStaff) customFilter = { userId: req.user._id }
 
-        const data = await Reservation.findOne({ _id: req.params.id })
+        const data = await Car.findOne({ _id: req.params.id }).populate([
+            { path: "createdId", select: "username" },
+            { path: "updatedId", select: "username" }
+        ])
 
         res.status(200).send({
             error: false,
