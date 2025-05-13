@@ -32,8 +32,8 @@ module.exports = {
             const data = await res.getModelList(Reservation, customFilter, [
                 { path: "userId", select: "username firstName lastName" },
                 { path: "carId", select: "brand model" },
-                { path: "createdId", select: "username" },
-                { path: "updatedId", select: "username" },
+                { path: "createdAt" },
+                { path: "updatedAt" },
             ]);
 
             res.status(200).send({
@@ -66,7 +66,16 @@ module.exports = {
             }
 
             // Validate startDate and endDate
-            const { startDate, endDate, reservedDays } = dateValidation(req.body?.startDate, req.body?.endDate);
+            const [ startDate, endDate, reservedDays ] = dateValidation(req.body?.startDate, req.body?.endDate);
+            
+            console.log("startDate:", startDate);
+            console.log("endDate:", endDate);
+
+
+            // Eğer reservedDays geçerli değilse hata fırlat
+            if (!reservedDays || isNaN(reservedDays)) {
+                throw new CustomError("Invalid reservation days", 400);
+            }
 
             // Check if the car is reserved for the given dates
             const reservedCarIds = await Reservation.find({
@@ -74,6 +83,8 @@ module.exports = {
                 startDate: { $lte: endDate },
                 endDate: { $gte: startDate }
             });
+
+            console.log("reservedCarIds", reservedCarIds);
 
             if (reservedCarIds.length > 0) {
                 throw new CustomError("The car is already reserved for the given dates", 400);
@@ -93,6 +104,7 @@ module.exports = {
             // Get the car's price per day and calculate the amount
             const car = await Car.findById(req.body?.carId).select('pricePerDay');
             const dailyCost = car ? Number(car.pricePerDay) : 0;
+            console.log("car:", car)
 
             if (dailyCost === 0) {
                 throw new CustomError("Car not found or invalid pricing", 404);

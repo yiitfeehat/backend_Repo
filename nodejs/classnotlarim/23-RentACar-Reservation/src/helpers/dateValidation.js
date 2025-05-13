@@ -14,7 +14,6 @@ module.exports = (startDate, endDate) => {
   if (isNaN(start.getTime()) || isNaN(end.getTime())) {
     throw new CustomError("Invalid date format", 400);
   }
-  // Saatle ilgili bir ayar yapılmayacak- Sadece tarihe göre hesap işlemi yapılacak
 
   today.setHours(0, 0, 0, 0);
 
