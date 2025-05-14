@@ -111,7 +111,14 @@ module.exports = {
 
         if (refreshToken) {
 
-            const jwtData = await jwt.verify(refreshToken, process.env.REFRESH_KEY)
+            try {
+                const jwtData = jwt.verify(refreshToken, process.env.REFRESH_KEY)
+
+            } catch (err) {
+                res.errorStatusCode = 401;
+                throw new Error("Invalid or expired refresh token.");
+            }
+
 
             if (jwtData) {
 
@@ -157,7 +164,7 @@ module.exports = {
             }
 
         } else {
-            
+
             res.errorStatusCode = 401
             throw new Error('Please enter token.refresh')
         }

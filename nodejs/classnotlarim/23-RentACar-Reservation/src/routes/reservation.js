@@ -15,8 +15,8 @@ router.route('/')
 
 router.route("/:id")
     .get(permissions.isLogin, reservation.read)
-    .put(permissions.isLogin, reservation.update)
-    .patch(permissions.isLogin, reservation.update)
+    .put(permissions.isStaffOrisAdmin, reservation.update)
+    .patch(permissions.isStaffOrisAdmin, reservation.update)
     .delete(permissions.isAdmin, reservation.delete)
 
 

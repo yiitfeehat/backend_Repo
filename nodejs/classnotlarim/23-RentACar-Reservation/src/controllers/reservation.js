@@ -27,18 +27,19 @@ module.exports = {
         */
         try {
             // If the user is neither Admin nor Staff, filter by userId
-            const customFilter = !req.user.isAdmin && !req.user.isStaff ? { userId: req.user._id } : {};
+            const isAdmin = req.user?.isAdmin === true;
+            const isStaff = req.user?.isStaff === true;
+
+            const customFilter = (!isAdmin && !isStaff) ? { userId: req.user._id } : {};
 
             const data = await res.getModelList(Reservation, customFilter, [
                 { path: "userId", select: "username firstName lastName" },
-                { path: "carId", select: "brand model" },
-                { path: "createdAt" },
-                { path: "updatedAt" },
+                { path: "carId", select: "brand model" }
             ]);
 
             res.status(200).send({
                 error: false,
-                details: await res.getModelListDetails(Reservation),
+                details: await res.getModelListDetails(Reservation, customFilter),
                 data
             });
         } catch (err) {
@@ -66,8 +67,8 @@ module.exports = {
             }
 
             // Validate startDate and endDate
-            const [ startDate, endDate, reservedDays ] = dateValidation(req.body?.startDate, req.body?.endDate);
-            
+            const [startDate, endDate, reservedDays] = dateValidation(req.body?.startDate, req.body?.endDate);
+
             console.log("startDate:", startDate);
             console.log("endDate:", endDate);
 
@@ -177,6 +178,7 @@ module.exports = {
 
             res.status(202).send({
                 error: false,
+                message: "successfully.",
                 data: updated,
                 new: newData
             });

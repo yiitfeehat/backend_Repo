@@ -1,22 +1,11 @@
 "use strict";
+
 /* -------------------------------------------------------
     | FULLSTACK TEAM | NODEJS / EXPRESS |
-/* ------------------------------------------------------- *
-{
-    "userId": "65343222b67e9681f937f001",
-    "carId": "65352f518a9ea121b1ca5001",
-    "startDate": "2023-10-10",
-    "endDate": "2023-10-16"
-}
-{
-    "userId": "65343222b67e9681f937f002",
-    "carId": "65352f518a9ea121b1ca5002",
-    "startDate": "2023-10-14",
-    "endDate": "2023-10-20"
-}
 /* ------------------------------------------------------- */
+
 const { mongoose } = require("../configs/dbConnection");
-const dateToLocaleString=require("../helpers/dateToLocaleString")
+const dateToLocaleString = require("../helpers/dateToLocaleString");
 
 // Reservation Model:
 const ReservationSchema = new mongoose.Schema(
@@ -24,7 +13,7 @@ const ReservationSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      // required: true,
+      required: true,
     },
 
     carId: {
@@ -45,28 +34,34 @@ const ReservationSchema = new mongoose.Schema(
 
     amount: {
       type: Number,
-      // required: true,
-    },
+      // `amount` değeri sistem tarafından hesaplanacak, manuel alınmayacak
+      // required: true, gerekliyse buraya eklenebilir
+    }
   },
   {
     collection: "reservations",
-    timestamps: true,
+    timestamps: true, // createdAt ve updatedAt otomatik olarak eklenecek
   }
 );
 
+// Özelleştirilmiş JSON dönüşümü
 ReservationSchema.set("toJSON", {
   transform: (doc, ret) => {
     ret.id = ret._id;
 
+    // Tarih formatlarını kullanıcı dostu hale getirmek
     ret.startDate = dateToLocaleString(ret.startDate);
     ret.endDate = dateToLocaleString(ret.endDate);
     ret.createdAt = dateToLocaleString(ret.createdAt);
     ret.updatedAt = dateToLocaleString(ret.updatedAt);
 
+    // MongoDB'nin _v alanını çıkarmak
     delete ret._v;
   },
 });
 
-// Export:
+// Indexleme eklemek (örnek: daha hızlı sorgular için)
+ReservationSchema.index({ userId: 1, carId: 1 }); // Kullanıcı ve araç kombinasyonuna göre index
 
+// Export:
 module.exports = mongoose.model("Reservation", ReservationSchema);
