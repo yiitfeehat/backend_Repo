@@ -5,18 +5,17 @@
 const { mongoose } = require('../configs/dbConnection')
 /* ------------------------------------------------------- */
 
-const categorySchema = new mongoose.Schema({
+const categorySchema = mongoose.Schema({
 
     name: {
         type: String,
         trim: true,
         required: true,
-        unique: true,
+        unique: true
     }
-
 }, {
-    collection: 'categories',
+    collection: "categories",
     timestamps: true
 });
 
-module.exports = mongoose.model("Category", categorySchema);
+module.exports = mongoose.model("Category", categorySchema)

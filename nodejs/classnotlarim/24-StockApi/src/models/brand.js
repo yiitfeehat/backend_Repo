@@ -5,23 +5,21 @@
 const { mongoose } = require('../configs/dbConnection')
 /* ------------------------------------------------------- */
 
-const brandSchema = new mongoose.Schema({
+const brandSchema = mongoose.Schema({
 
     name: {
         type: String,
         trim: true,
         required: true,
-        unique: true,
+        unique: true
     },
-
     image: {
         type: String,
-        trim: true,
+        trim: true
     }
-
 }, {
-    collection: 'brands',
+    collection: "brands",
     timestamps: true
 });
 
-module.exports = mongoose.model("Brand", brandSchema);
+module.exports = mongoose.model("Brand", brandSchema)

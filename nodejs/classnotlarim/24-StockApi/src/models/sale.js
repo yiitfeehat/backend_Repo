@@ -5,45 +5,42 @@
 const { mongoose } = require('../configs/dbConnection')
 /* ------------------------------------------------------- */
 
-const saleSchema = new mongoose.Schema({
+const saleSchema = mongoose.Schema({
 
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: "User",
         required: true
     },
-
-    brandId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Brand',
-        required: true
-    },
-
     productId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
-        required: true
+        ref: "Product",
+        required: true,
     },
-
+    brandId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Brand",
+        required: true,
+    },
     quantity: {
         type: Number,
         required: true
     },
-
     price: {
         type: Number,
         required: true
     },
-
     priceTotal: {
         type: Number,
-        set: function () { return this.quantity * this.price }, // only works if this field is sent
-        default: function () { return this.quantity * this.price }, // works on create
-        transform: function () { return this.quantity * this.price } // works on update
+        set: function () { return this.quantity * this.price }, // only works if this field is sent 
+        default: function () { return this.quantity * this.price }, // works on create 
+        transform: function () { return this.quantity * this.price }, // works on update 
+
     }
+
 }, {
-    collection: 'sales',
+    collection: "sales",
     timestamps: true
 });
 
-module.exports = mongoose.model("Sale", saleSchema);
+module.exports = mongoose.model("Sale", saleSchema)
