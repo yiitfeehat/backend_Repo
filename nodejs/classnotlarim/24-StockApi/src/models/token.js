@@ -5,15 +5,16 @@
 const { mongoose } = require('../configs/dbConnection')
 /* ------------------------------------------------------- */
 
-const tokenSchema = mongoose.Schema({
+const tokenSchema = new mongoose.Schema({
 
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: 'User',
         required: true,
         unique: true,
         index: true
     },
+
     token: {
         type: String,
         trim: true,
@@ -23,8 +24,8 @@ const tokenSchema = mongoose.Schema({
     }
 
 }, {
-    collection: "tokens",
+    collection: 'tokens',
     timestamps: true
 });
 
-module.exports = mongoose.model("Token", tokenSchema)
+module.exports = mongoose.model("Token", tokenSchema);
