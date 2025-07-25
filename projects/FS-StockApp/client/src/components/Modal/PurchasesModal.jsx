@@ -67,7 +67,7 @@ export default function ProductModal({ handleClose, open, initialState }) {
                   Add New Firm
                 </MenuItem>
                 <hr />
-                {firms.map((firm, index) => (
+                {firms?.map((firm, index) => (
                   <MenuItem key={index} value={firm._id}>
                     {firm.name}
                   </MenuItem>
@@ -80,11 +80,11 @@ export default function ProductModal({ handleClose, open, initialState }) {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={info.info?.brandId?._id || info?.brandId  || ""}
+                value={info?.info?.brandId?._id || info?.brandId  || ""}
                 label="Brands"
                 onChange={handleChange}
               >
-                {brands.map((brand, index) => (
+                {brands?.map((brand, index) => (
                   <MenuItem key={index} value={brand._id}>
                     {brand.name}
                   </MenuItem>
@@ -100,7 +100,7 @@ export default function ProductModal({ handleClose, open, initialState }) {
                 label="Brands"
                 onChange={handleChange}
               >
-                {products.map((product, index) => (
+                {products?.map((product, index) => (
                   <MenuItem key={index} value={product._id}>
                     {product.name}
                   </MenuItem>
