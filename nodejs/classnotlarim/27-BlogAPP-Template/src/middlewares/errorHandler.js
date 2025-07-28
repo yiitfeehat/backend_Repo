@@ -4,21 +4,25 @@
 ------------------------------------------------------- */
 
 module.exports = (err, req, res, next) => {
+
     const errorStatusCode = res.errorStatusCode ?? 500
-    console.log('errorHandler worked.')
 
     const data = {
         error: true, // special data
         message: err.message, // error string message
         cause: err.cause, // error option cause
         // stack: err.stack, // error details
+        body: req.body,
     }
 
-    if (req.originalUrl.startsWith('/api')) {
+    // console.log(req.url)
+
+    if (req.url.startsWith('/api')) {
+
         res.status(errorStatusCode).send(data)
+        
     } else {
-        res.render('errors', { data })
+
+        res.render('error', { data })
     }
-
-};
-
+}

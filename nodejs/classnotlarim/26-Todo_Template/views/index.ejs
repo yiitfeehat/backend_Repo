@@ -3,9 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EJS Baslangic</title>
+    <title>EJS Intro</title>
 </head>
 <body>
-    <h1>EJS CALISTI</h1>
+    <h1>Hello EJS</h1>
+    <!-- send code to nodejs -->
+    <% 
+    console.log('this is first console with ejs')
+    console.log('hello everybody')
+    %>
+
+    <!-- safe print to html -->
+    <%= 5+9 %>
+    
+    <!-- direct print to html -->
+    <%- '<p> Selam <b> Yunus </b>  </p>' %>
+    
+    <!-- comment with ejs -->
+    <%# 
+    comment
+    second line
+    %>
+
 </body>
 </html>
