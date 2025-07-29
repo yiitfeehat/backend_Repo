@@ -1,9 +1,4 @@
-module.exports = function generatePagination(
-  previous,
-  current,
-  next,
-  totalPages,
-) {
+module.exports = function generatePagination(previous, current, next, totalPages) {
   let pagesList = [];
 
   // Previous page
