@@ -25,6 +25,6 @@ router.get("/:postId", BlogPost.read);
 router.route("/:postId/update").get(BlogPost.update).post(BlogPost.update);
 
 // Delete a specific post by ID
-router.delete("/:postId/delete", BlogPost.delete);
+router.get("/:postId/delete", BlogPost.delete);
 
 module.exports = router;

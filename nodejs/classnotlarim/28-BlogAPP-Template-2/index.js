@@ -25,6 +25,12 @@ app.use(express.urlencoded({ extended: true }));
 // Query Handler:
 app.use(require("./src/middlewares/queryHandler"));
 
+// ejs global state
+app.use((req, res, next) => {
+  res.locals.user = req.session?.user
+  next();
+});
+
 /* ------------------------------------------------------- */
 // <% %>
 app.set('view engine', 'ejs');
@@ -38,6 +44,8 @@ app.set('views', './public');
 
 // StaticFiles:
 app.use("/assets", express.static("./public/assets"));
+// Tiny MCE Static files:
+app.use("/tinymce", express.static("./node_modules/tinymce"));
 
 /* ------------------------------------------------------- */
 
